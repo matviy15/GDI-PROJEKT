@@ -112,12 +112,13 @@ int main() {
      */
     return 0;
 }
+
 /***************************************************END OF MAIN******************************************************/
 
 void xyz_calc(struct datapoint *dp) {
-    double betaRad,alfaRad;
-    betaRad=(90 - dp->longitude)*degToRad;
-    alfaRad=dp->latitude*degToRad;
+    double betaRad, alfaRad;
+    betaRad = (90 - dp->longitude) * degToRad;
+    alfaRad = dp->latitude * degToRad;
     dp->x = RADIUS * sin(betaRad) * cos(alfaRad);
     dp->y = RADIUS * sin(betaRad) * sin(alfaRad);
     dp->z = RADIUS * cos(betaRad);
@@ -127,19 +128,19 @@ void xyz_calc(struct datapoint *dp) {
  * Distance will be saved in the abstand value of the first data point(dp1)
  * dp1 - the first of the both data points between which the distance will be calculated
  * dp2 - the second data point */
-void euclidean_dist(struct datapoint *dp1, struct datapoint *dp2){
+void euclidean_dist(struct datapoint *dp1, struct datapoint *dp2) {
     xyz_calc(dp1);
     xyz_calc(dp2);
     /*printf("(x1 - x2)² = (%lf - %lf)² = %lf\n",dp1->x,dp2->x,pow(dp1->x-dp2->x,2) );
      * printf("(x1 - x2)² = (%lf - %lf)² = %lf\n",dp1->y,dp2->y,pow(dp1->y-dp2->y,2) );
      * printf("(x1 - x2)² = (%lf - %lf)² = %lf\n",dp1->z,dp2->z,pow(dp1->z-dp2->z,2) );
      */
-    dp1->abstand=sqrt(pow(dp1->x-dp2->x,2) + pow(dp1->y - dp2->y,2) + pow(dp1->z - dp2->z,2) );
+    dp1->abstand = sqrt(pow(dp1->x - dp2->x, 2) + pow(dp1->y - dp2->y, 2) + pow(dp1->z - dp2->z, 2));
 }
+
 
 void orthodromic_dist(struct datapoint *dp1, struct datapoint *dp2) {
     dp2->abstand = RADIUS * acos(sin(dp1->latitude * degToRad) * sin(dp2->latitude * degToRad) +
                                  cos(dp1->latitude * degToRad) * cos(dp2->latitude * degToRad) *
                                  cos((dp1->longitude - dp2->longitude) * degToRad));
-
 }
