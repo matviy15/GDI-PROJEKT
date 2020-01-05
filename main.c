@@ -7,7 +7,7 @@
 #define POINTS 1000
 #define RADIUS 6371
 #define PI 3.14159265
-
+double degToRad = 0.017453293;
 struct datapoint {
     char event[30]; // event information
     char datetime[30]; // date and time information
@@ -29,7 +29,10 @@ struct datapoint {
 };
 
 void xyz_calc(struct datapoint *dp);
+
 void euclidean_dist(struct datapoint *dp1, struct datapoint *dp2);
+
+void orthodromic_dist(struct datapoint *dp1, struct datapoint *dp2);
 
 /*****************************************************MAIN***********************************************************/
 int main() {
@@ -88,10 +91,14 @@ int main() {
                 dp[i].altitude, dp[i].hhh, dp[i].hgeom1, dp[i].hgeom2, dp[i].PPPP, dp[i].TTT, dp[i].RH, dp[i].dd,
                 dp[i].ff);
     }
-    xyz_calc(&dp[3]);
-    printf("x: %lf\ny: %lf\nz: %lf\nLongtitude: %lf\nLatitude: %lf\n",dp[3].x,dp[3].y,dp[3].z,dp[3].longitude,dp[3].latitude);
-    euclidean_dist(&dp[0],&dp[999]);
-    printf("%.2lf km",dp[0].abstand);
+    xyz_calc(&dp[0]);
+    printf("x: %lf\ny: %lf\nz: %lf\nLongitude: %lf\nLatitude: %lf\n", dp[0].x, dp[0].y, dp[0].z, dp[0].longitude,
+           dp[0].latitude);
+    printf("Longitude: %lf\nLatitude: %lf\n", dp[999].longitude, dp[999].latitude);
+    euclidean_dist(&dp[0], &dp[999]);
+    orthodromic_dist(&dp[0], &dp[999]);
+    printf("Euclidean distance= %.2lf km\n", dp[0].abstand);
+    printf("Orthodromic distance= %.2lf km\n", dp[999].abstand);
     fclose(fileToRead);
     fclose(fileToWrite);
 
@@ -108,7 +115,6 @@ int main() {
 /***************************************************END OF MAIN******************************************************/
 
 void xyz_calc(struct datapoint *dp) {
-    double degToRad = 0.017453293;
     double betaRad,alfaRad;
     betaRad=(90 - dp->longitude)*degToRad;
     alfaRad=dp->latitude*degToRad;
@@ -131,6 +137,9 @@ void euclidean_dist(struct datapoint *dp1, struct datapoint *dp2){
     dp1->abstand=sqrt(pow(dp1->x-dp2->x,2) + pow(dp1->y - dp2->y,2) + pow(dp1->z - dp2->z,2) );
 }
 
-void orthodromic_dist(){
+void orthodromic_dist(struct datapoint *dp1, struct datapoint *dp2) {
+    dp2->abstand = RADIUS * acos(sin(dp1->latitude * degToRad) * sin(dp2->latitude * degToRad) +
+                                 cos(dp1->latitude * degToRad) * cos(dp2->latitude * degToRad) *
+                                 cos((dp1->longitude - dp2->longitude) * degToRad));
 
 }
